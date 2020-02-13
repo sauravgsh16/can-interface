@@ -10,11 +10,6 @@ import (
 	"sync"
 )
 
-var (
-	// vbsAddr = "tcp://localhost:19000"
-	vbsAddr = "tcp://172.24.49.16:19000"
-)
-
 // Can struct
 type Can struct {
 	r            *reader
@@ -29,8 +24,8 @@ type Can struct {
 }
 
 // New returns a pointer to Can
-func New(in chan DataHolder) (*Can, error) {
-	conn, err := Dial(vbsAddr)
+func New(url string, in chan DataHolder) (*Can, error) {
+	conn, err := Dial(url)
 	if err != nil {
 		return nil, err
 	}
@@ -190,6 +185,16 @@ func (c *Can) write(m *Message) error {
 		return err
 	}
 	return nil
+}
+
+// Close can connection
+func (c *Can) Close() {
+	select {
+	case c.Done <- true:
+
+	default:
+		log.Println("Done ch not available")
+	}
 }
 
 func isPrefix(s, substr string) bool {
