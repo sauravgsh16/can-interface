@@ -24,7 +24,7 @@ type Can struct {
 }
 
 // New returns a pointer to Can
-func New(url string, in chan DataHolder) (*Can, error) {
+func New(url string, in chan DataHolder, simName string) (*Can, error) {
 	conn, err := Dial(url)
 	if err != nil {
 		return nil, err
@@ -40,6 +40,11 @@ func New(url string, in chan DataHolder) (*Can, error) {
 		Done:         make(chan bool),
 		ServIncoming: in,
 	}
+
+	if _, err := conn.Conn.Write([]byte(simName)); err != nil {
+		return nil, err
+	}
+
 	return c, nil
 }
 
@@ -193,7 +198,7 @@ func (c *Can) Close() {
 	case c.Done <- true:
 
 	default:
-		log.Println("Done ch not available")
+		log.Println("Done channel not available")
 	}
 }
 
