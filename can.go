@@ -2,7 +2,6 @@ package can
 
 import (
 	"bufio"
-	"fmt"
 	"io"
 	"log"
 	"net"
@@ -76,7 +75,6 @@ func (c *Can) handleIncoming() {
 			log.Printf(err.Error())
 			continue
 		}
-		fmt.Printf("%#v\n\n", msg)
 
 		c.In <- msg
 	}
