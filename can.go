@@ -156,16 +156,18 @@ func (c *Can) processIncoming() {
 }
 
 func (c *Can) handleMessage(h chan DataHolder) {
+loop:
 	for {
 		select {
 		case tp, ok := <-h:
 			if !ok {
-				break
+				break loop
 			}
 
 			c.ServIncoming <- tp
 		}
 	}
+	close(c.ServIncoming)
 }
 
 func (c *Can) handleOutgoing() {
